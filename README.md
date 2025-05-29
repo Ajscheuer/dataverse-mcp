@@ -25,17 +25,18 @@ Before using this MCP server, you need:
 
 ### 1. Azure AD App Registration
 
-1. Go to [Azure Portal](https://portal.azure.com) → Azure Active Directory → App Registrations
+1. Go to [Azure Portal](https://portal.azure.com) → Microsoft Entra ID → Manage → App Registrations
 2. Click "New registration"
 3. Name your application (e.g., "Dataverse MCP Server")
 4. Leave Redirect URI blank
 5. Click "Register"
 6. Note down the **Application (client) ID** and **Directory (tenant) ID**
-7. Go to "Certificates & secrets" → "New client secret"
-8. Create a secret and note down the **Client Secret Value**
-9. Go to "API permissions" → "Add a permission" → "Dynamics CRM"
-10. Add "user_impersonation" permission (Application permission)
-11. Click "Grant admin consent"
+7. Go to "Client credentials" → "Add a certificate or secret" → "New client secret"
+8. Add a description "Dataverse MCP Server" and an Expiration date.
+9. Create a secret and note down the **Client Secret and Value** 
+10. Go to "API permissions" → "Add a permission" → "Dynamics CRM"
+11. Add "user_impersonation" permission (Application permission)
+12. Click "Add permissions"
 
 ### 2. Installation
 
