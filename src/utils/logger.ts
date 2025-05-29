@@ -1,4 +1,4 @@
-import { config } from '../config/environment.js';
+import { getConfig } from '../config/environment.js';
 
 export enum LogLevel {
   ERROR = 0,
@@ -20,7 +20,14 @@ function getCurrentLogLevel(): LogLevel {
   if (envLogLevel && logLevelMap[envLogLevel] !== undefined) {
     return logLevelMap[envLogLevel];
   }
-  return logLevelMap[config.logging.level.toLowerCase()] ?? LogLevel.INFO;
+  
+  try {
+    const config = getConfig();
+    return logLevelMap[config.logging.level.toLowerCase()] ?? LogLevel.INFO;
+  } catch (error) {
+    // If config is not initialized yet, default to INFO level
+    return LogLevel.INFO;
+  }
 }
 
 export class Logger {

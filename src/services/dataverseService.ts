@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
 import { DataverseAuth } from '../auth/dataverseAuth.js';
-import { config } from '../config/environment.js';
+import { getConfig } from '../config/environment.js';
 import { createLogger } from '../utils/logger.js';
 import {
   DataverseRecord,
@@ -29,7 +29,7 @@ export class DataverseService {
     logger.info('Initializing Dataverse service...');
     
     this.auth = new DataverseAuth();
-    this.baseUrl = `${config.dataverse.environmentUrl}/api/data/v9.2`;
+    this.baseUrl = `${getConfig().dataverse.environmentUrl}/api/data/v9.2`;
     
     this.httpClient = axios.create({
       baseURL: this.baseUrl,

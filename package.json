@@ -5,16 +5,16 @@
   "private": true,
   "type": "module",
   "bin": {
-    "dataverse-mcp": "./build/index.js"
+    "dataverse-mcp": "./build/src/index.js"
   },
   "files": [
     "build"
   ],
   "scripts": {
-    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "build": "tsc && node -e \"require('fs').chmodSync('build/src/index.js', '755')\"",
     "prepare": "npm run build",
     "watch": "tsc --watch",
-    "inspector": "npx @modelcontextprotocol/inspector build/index.js",
+    "inspector": "npx @modelcontextprotocol/inspector build/src/index.js",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",

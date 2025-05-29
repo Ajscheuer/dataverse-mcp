@@ -16,7 +16,7 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 
 // Import configuration and services
-import './config/environment.js'; // This loads and validates environment variables
+import { initializeConfig } from './config/environment.js';
 import { DataverseService } from './services/dataverseService.js';
 import { createLogger } from './utils/logger.js';
 
@@ -27,6 +27,24 @@ import { queryRecordsTool, handleQueryRecords } from './tools/queryRecords.js';
 import { updateRecordTool, handleUpdateRecord } from './tools/updateRecord.js';
 import { deleteRecordTool, handleDeleteRecord } from './tools/deleteRecord.js';
 import { listTablesTool, handleListTables } from './tools/listTables.js';
+
+/**
+ * Parse command line arguments for configuration
+ */
+function parseArguments(): Record<string, string> {
+  const args = process.argv.slice(2);
+  const config: Record<string, string> = {};
+  
+  for (let i = 0; i < args.length; i += 2) {
+    if (args[i].startsWith('--') && args[i + 1]) {
+      const key = args[i].slice(2);
+      const value = args[i + 1];
+      config[key] = value;
+    }
+  }
+  
+  return config;
+}
 
 const logger = createLogger('DataverseMCPServer');
 
@@ -48,8 +66,15 @@ const server = new Server(
 // Initialize Dataverse service
 let dataverseService: DataverseService;
 
+// Parse command line arguments for configuration
+const cliConfig = parseArguments();
+
 try {
   logger.info('Initializing Dataverse MCP Server...');
+  
+  // Initialize configuration with CLI arguments
+  initializeConfig(cliConfig);
+  
   dataverseService = new DataverseService();
   logger.info('Dataverse MCP Server initialized successfully');
 } catch (error) {

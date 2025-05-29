@@ -1,5 +1,5 @@
 import { ConfidentialClientApplication, ClientCredentialRequest } from '@azure/msal-node';
-import { config } from '../config/environment.js';
+import { getConfig } from '../config/environment.js';
 import { AccessToken } from '../types/dataverse.js';
 
 export class DataverseAuth {
@@ -9,6 +9,8 @@ export class DataverseAuth {
 
   constructor() {
     console.error('[Auth] Initializing Dataverse authentication...');
+    
+    const config = getConfig();
     
     this.msalInstance = new ConfidentialClientApplication({
       auth: {
@@ -33,6 +35,8 @@ export class DataverseAuth {
       }
 
       console.error('[Auth] Requesting new access token...');
+
+      const config = getConfig();
 
       // Prepare the client credential request
       const clientCredentialRequest: ClientCredentialRequest = {

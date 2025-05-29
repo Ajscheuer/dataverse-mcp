@@ -11,6 +11,7 @@ A Model Context Protocol (MCP) server that provides comprehensive CRUD operation
 - ✅ **Comprehensive Logging**: Detailed logging for debugging and monitoring
 - ✅ **Input Validation**: Thorough validation of all inputs and OData queries
 - ✅ **Error Handling**: Graceful error handling with detailed error messages
+- ✅ **Flexible Configuration**: Support for both environment variables and MCP configuration arguments
 
 ## Prerequisites
 
@@ -36,7 +37,27 @@ Before using this MCP server, you need:
 10. Add "user_impersonation" permission (Application permission)
 11. Click "Grant admin consent"
 
-### 2. Environment Configuration
+### 2. Installation
+
+```bash
+# Install dependencies
+npm install
+
+# Build the project
+npm run build
+```
+
+## Configuration
+
+You can configure the Dataverse MCP server in two ways:
+
+### Option 1: MCP Configuration Arguments (Recommended)
+
+Pass credentials directly through the MCP configuration. This is the recommended approach as it keeps credentials secure within your MCP client configuration.
+
+### Option 2: Environment Variables
+
+Use environment variables for configuration (backward compatibility).
 
 1. Copy `.env.example` to `.env`:
    ```bash
@@ -56,19 +77,7 @@ Before using this MCP server, you need:
    RATE_LIMIT_REQUESTS_PER_MINUTE=60
    ```
 
-### 3. Installation
-
-```bash
-# Install dependencies
-npm install
-
-# Build the project
-npm run build
-```
-
 ## MCP Configuration
-
-Add the server to your MCP client configuration:
 
 ### For Claude Desktop
 
@@ -79,7 +88,13 @@ Add to your `claude_desktop_config.json`:
   "mcpServers": {
     "dataverse": {
       "command": "node",
-      "args": ["path/to/dataverse-mcp/build/index.js"]
+      "args": [
+        "path/to/dataverse-mcp/build/src/index.js",
+        "--clientId", "your-client-id-here",
+        "--clientSecret", "your-client-secret-here", 
+        "--tenantId", "your-tenant-id-here",
+        "--environmentUrl", "https://yourorg.crm.dynamics.com"
+      ]
     }
   }
 }
@@ -95,7 +110,13 @@ Add to your `.vscode/mcp.json`:
     "dataverse": {
       "type": "stdio",
       "command": "node",
-      "args": ["./build/index.js"]
+      "args": [
+        "./build/src/index.js",
+        "--clientId", "your-client-id-here",
+        "--clientSecret", "your-client-secret-here",
+        "--tenantId", "your-tenant-id-here", 
+        "--environmentUrl", "https://yourorg.crm.dynamics.com"
+      ]
     }
   }
 }
@@ -110,8 +131,13 @@ Add to your Cline MCP configuration file (`~/.cline/mcp_servers.json` on macOS/L
   "mcpServers": {
     "dataverse": {
       "command": "node",
-      "args": ["path/to/dataverse-mcp/build/index.js"],
-      "env": {}
+      "args": [
+        "path/to/dataverse-mcp/build/src/index.js",
+        "--clientId", "your-client-id-here",
+        "--clientSecret", "your-client-secret-here",
+        "--tenantId", "your-tenant-id-here",
+        "--environmentUrl", "https://yourorg.crm.dynamics.com"
+      ]
     }
   }
 }
@@ -124,11 +150,51 @@ Alternatively, if using Cline in VS Code, you can configure it in your workspace
   "cline.mcpServers": {
     "dataverse": {
       "command": "node",
-      "args": ["./build/index.js"]
+      "args": [
+        "./build/src/index.js",
+        "--clientId", "your-client-id-here",
+        "--clientSecret", "your-client-secret-here",
+        "--tenantId", "your-tenant-id-here",
+        "--environmentUrl", "https://yourorg.crm.dynamics.com"
+      ]
     }
   }
 }
 ```
+
+### Configuration Parameters
+
+When using MCP configuration arguments, you can pass the following parameters:
+
+- `--clientId`: Azure AD Application (client) ID
+- `--clientSecret`: Azure AD Client Secret
+- `--tenantId`: Azure AD Directory (tenant) ID  
+- `--environmentUrl`: Dataverse environment URL (e.g., https://yourorg.crm.dynamics.com)
+- `--logLevel`: Log level (error, warn, info, debug) - defaults to 'info'
+- `--rateLimit`: Rate limit requests per minute - defaults to 60
+
+### Legacy Environment Variable Configuration
+
+If you prefer to use environment variables (or for backward compatibility), you can still configure using `.env` file or environment variables:
+
+```json
+{
+  "mcpServers": {
+    "dataverse": {
+      "command": "node", 
+      "args": ["path/to/dataverse-mcp/build/src/index.js"],
+      "env": {
+        "DATAVERSE_CLIENT_ID": "your-client-id-here",
+        "DATAVERSE_CLIENT_SECRET": "your-client-secret-here",
+        "DATAVERSE_TENANT_ID": "your-tenant-id-here",
+        "DATAVERSE_ENVIRONMENT_URL": "https://yourorg.crm.dynamics.com"
+      }
+    }
+  }
+}
+```
+
+**Note**: CLI arguments take precedence over environment variables, so you can mix both approaches if needed.
 
 ## Available Tools
 
@@ -295,7 +361,7 @@ Update the job title of contact 12345678-1234-1234-1234-123456789012 to "Senior 
 
 ### Logging
 
-Set `LOG_LEVEL=debug` in your `.env` file for detailed logging:
+Set `--logLevel=debug` in your MCP configuration for detailed logging, or use environment variables:
 
 ```env
 LOG_LEVEL=debug
